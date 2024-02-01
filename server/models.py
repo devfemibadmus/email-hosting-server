@@ -13,7 +13,7 @@ class VirtualDomains(models.Model):
         return self.name
 
     def get_virtual_users(self):
-        return VirtualUsers.objects.filter(domain=self)
+        return VirtualUsers.objects.filter(domain_id=self.id)
 
 class VirtualAliases(models.Model):
     domain_id = models.IntegerField()
