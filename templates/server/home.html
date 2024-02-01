@@ -145,6 +145,12 @@
                 </div>
                 {% else %}
                 <div class="box">
+                    {% with emailAddress=domain.get_virtual_users %}
+                        {% for user in emailAddress %}
+                        <p>Email: {{user.email}}</p>
+                        <p>Password: {{user.password}}</p>
+                        {% endfor %}
+                    {% endwith %}
                     <div class="circle">
                         <img src="domain_icon.png" alt="Domain Icon" width="80">
                     </div>
@@ -159,6 +165,12 @@
                 </div>
                 {% else %}
                 <div class="box">
+                    {% with emailAddress=domain.get_virtual_users %}
+                        {% for user in emailAddress %}
+                        <p>Email: {{user.email}}</p>
+                        <p>Password: {{user.password}}</p>
+                        {% endfor %}
+                    {% endwith %}
                     <div class="circle">
                         <img src="domain_icon.png" alt="Domain Icon" width="80">
                     </div>
