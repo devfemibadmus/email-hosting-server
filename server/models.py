@@ -31,3 +31,8 @@ class EmailMessage(models.Model):
     )
     category = models.CharField(max_length=10, choices=category_choices)
     security_info = models.OneToOneField(SecurityInfo, on_delete=models.CASCADE, related_name='email_message', null=True, blank=True)
+
+class Domain(models.Model):
+    name = models.CharField(max_length=100)
+    date_added = models.DateTimeField(auto_created=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='domains')
