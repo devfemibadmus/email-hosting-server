@@ -1,50 +1,53 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from helper import DomainResolver as MXRecord
 from django.contrib.auth.decorators import login_required
-from .models import EmailMessage, CustomUser, Subscription, CustomUser
+from decorator.authenticator import resolve_domain_record
+from .models import EmailMessage, CustomUser, Domain
+from django.contrib import messages
+from django.shortcuts import render
+from django.views import View
+from .models import Domain
 
 @login_required
 def server(request):
     return render(request, 'server/email.html')
 
-@login_required
-def addDomain(request, domain):
-    valid = False
-    mx = MXRecord.resolve_domain(domain)
-    if mx == "mail.blackstackhub.com":
-        valid = True
-    return render(request, 'server/email.html', {'valid': valid})
-
-from django.shortcuts import render
-from decorator.authenticator import resolve_mx_record
-
-@login_required
-@resolve_mx_record
-def my_view(request, domain=None, mx_record=None):
-    if mx_record:
-        context = {
-            'mx_record': mx_record,
-        }
-        return render(request, 'template.html', context)
-    else:
-        return render(request, 'error.html', {'error_message': 'MX record not found'})
-        
-class Domain(View):
-    @resolve_mx_record
+class DomainView(View):
     @login_required
-    def dispatch(self, request, *args, **kwargs):
-        if request.method == 'GET':
-            domain = kwargs.get('domain') or request.GET.get('domain')
-        elif request.method == 'POST':
-            domain = request.POST.get('domain')
-        else:
-            domain = None
-
+    @resolve_domain_record
+    def get(self, request, *args, **kwargs):
+        domain = kwargs.get('domain') or request.GET.get('domain')
         if domain:
-            if domain not in request.user.domain:
-                messages.warning(request, f"{domain} not associated with your account")
+            if Domain.objects.filter(name=domain, user=request.user).exists():
+                messages.success(request, f"{domain} associated with this account")
+                domain_obj = Domain.objects.get(name=domain, user=request.user)
+            else:
+                messages.info(request, f"{domain} not associated with this account")
+                domain_obj = None
         else:
-            domain = request.user.domain
+            return redirect('server')
+        return render(request, "server/domain.html", {'domain': domain_obj})
 
-        return render(request, "server/domain.html", {'domain': domain})
+    @login_required
+    @resolve_domain_record
+    def post(self, request, *args, **kwargs):
+        domain = request.POST.get('domain')
+        if domain:
+            mx_record = request.mx_record
+            txt_record = request.txt_record
+            if mx_record:
+                if Domain.objects.filter(name=domain, user=request.user).exists():
+                    if Domain.objects.filter(name=domain, user=request.user, txt_record=request.user.txt_record).exists():
+                        messages.info(request, f"{domain} already associated with your account")
+                    else:
+                        messages.warning(request, f"{domain} TXT record is incorrect")
+                else:
+                    if txt_record:
+                        messages.success(request, f"{domain} TXT record verified")
+                        domain_obj = Domain.objects.create(name=domain, user=request.user, txt_record=request.user.txt_record)
+                    else:
+                        messages.warning(request, f"{domain} TXT record is incorrect")
+            else:
+                messages.warning(request, f"{domain} pointing to {mx_record}")
+        else:
+            messages.warning(request, "Domain parameter is missing")
+            domain_obj = None
+        return render(request, "server/domain.html", {'domain': domain_obj})
