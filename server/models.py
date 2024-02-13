@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from django.db import models
 
 
@@ -6,8 +7,8 @@ class CustomUser(AbstractUser):
     txt_record = models.CharField(max_length=255, default='txt')
 
     def save(self, *args, **kwargs):
-        if not self.txt_record.startswith("mail.blackstackhub.com__"):
-            self.txt_record = f"mail.blackstackhub.com__{self.username}"
+        if not self.txt_record.startswith(f"{MX_RECORD}"):
+            self.txt_record = f"{MX_RECORD}{self.username}"
         super().save(*args, **kwargs)
 
     def __str__(self):
