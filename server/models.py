@@ -7,8 +7,8 @@ class CustomUser(AbstractUser):
     txt_record = models.CharField(max_length=255, default='txt')
 
     def save(self, *args, **kwargs):
-        if not self.txt_record.startswith(f"{MX_RECORD}"):
-            self.txt_record = f"{MX_RECORD}{self.username}"
+        if not self.txt_record.startswith(f"{settings.MX_RECORD}"):
+            self.txt_record = f"{settings.MX_RECORD}{self.username}"
         super().save(*args, **kwargs)
 
     def __str__(self):
