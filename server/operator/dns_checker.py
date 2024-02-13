@@ -45,7 +45,7 @@ class DNSChecker:
 
     def verify_mx(self, domain, mx_verify=''):
         mx_results = self.get_mx(domain)
-        if isinstance(mx_results, dict):
+        if isinstance(mx_results, dict) and mx_results:
             for mx, priority in mx_results.items():
                 if mx == mx_verify and priority < 20:
                     return True
@@ -55,7 +55,7 @@ class DNSChecker:
 
     def verify_txt(self, domain, user_txt=''):
         txt_results = self.get_txt(domain)
-        if isinstance(txt_results, list):
+        if isinstance(txt_results, list) and txt_results:
             for txt in txt_results:
                 if user_txt in txt:
                     return True
