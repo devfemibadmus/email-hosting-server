@@ -1,0 +1,4 @@
+[0211/224517.605:ERROR:registration_protocol_win.cc(107)] CreateFile: The system cannot find the file specified. (0x2)
+
+
+below code is working fine for getting MX record, can u give me the rest for getting other record for each, give me for each function to get other record
