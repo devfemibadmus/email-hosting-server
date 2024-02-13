@@ -4,9 +4,9 @@
 <!--End user profile-->
 
 <!--User domains-->
-{% with domains = request.user.get_owned_domains %}
+{% with domains=request.user.get_owned_domains %}
 {% for domain in domains %}
-<p>{{domain.id}} {{domain.name}}</p>
+<p>{{domain.name}} {{domain.name}}</p>
 {% endfor %}
 {% endwith %}
 <!--End user domains-->
@@ -14,9 +14,9 @@
 <!--Mail messages-->
 {% if request.domain_obj %}
 {{request.domain_obj.name}}
-{% with emails = request.domain_obj.get_emails %}
+{% with emails=request.domain_obj.get_emails %}
 {% for email in emails %}
-<p>{{email.id}} {{email.message}}</p>
+<p>{{email.sender}} {{email.message}}</p>
 {% endfor %}
 {% endwith %}
 {% endif %}
