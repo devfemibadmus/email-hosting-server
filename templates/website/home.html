@@ -1,1 +1,7 @@
 home
+
+{% if request.user %}
+{{request.user.txt_record}}
+{{request.user.username}}
+{{request.user.date_joined}}
+{% endif %}

@@ -1,0 +1,39 @@
+<!--User profile-->
+<p>User: {{request.user.username}}</p>
+<p>Domain: {{domain}}</p>
+<!--End user profile-->
+
+<!--User domains-->
+{% with domains = request.user.get_owned_domains %}
+{% for domain in domains %}
+<p>{{domain.id}} {{domain.name}}</p>
+{% endfor %}
+{% endwith %}
+<!--End user domains-->
+
+<!--Mail messages-->
+{% if request.domain_obj %}
+{{request.domain_obj.name}}
+{% with emails = request.domain_obj.get_emails %}
+{% for email in emails %}
+<p>{{email.id}} {{email.message}}</p>
+{% endfor %}
+{% endwith %}
+{% endif %}
+<!--End mail messages-->
+
+<!--Messages or notification-->
+{% for message in messages %}
+<p>{{message.tags}} {{message}}</p>
+{% endfor %}
+<!--End messages-->
+
+<!--
+    /domain/[
+        messages -> get messages -> GET -> ?domain ?categories ?id
+        messages/clear -> clear messages -> GET -> ?domain ?categories ?id
+        messages/create -> create message -> POST -> ?domain ?categories
+        messages/download -> download message -> GET -> ?domain ?categories ?id
+        ]
+-->
+
