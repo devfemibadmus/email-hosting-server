@@ -1,12 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class Subscription(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
 class CustomUser(AbstractUser):
-    subscriptions = models.ManyToManyField(Subscription, related_name='subscribers', blank=True)
+    txt_record = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.username
+
+class Domain(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    txt_record = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class SecurityInfo(models.Model):
     tls_enabled = models.BooleanField(default=False)
@@ -14,6 +21,9 @@ class SecurityInfo(models.Model):
     mailed_by = models.CharField(max_length=255, blank=True, null=True)
     signed_by = models.CharField(max_length=255, blank=True, null=True)
     encryption_standard = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.tls_enabled
 
 class EmailMessage(models.Model):
     sender = models.EmailField()
@@ -32,7 +42,7 @@ class EmailMessage(models.Model):
     category = models.CharField(max_length=10, choices=category_choices)
     security_info = models.OneToOneField(SecurityInfo, on_delete=models.CASCADE, related_name='email_message', null=True, blank=True)
 
-class Domain(models.Model):
-    name = models.CharField(max_length=100)
-    date_added = models.DateTimeField(auto_created=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='domains')
+    def __str__(self):
+        return self.subject
+
+
