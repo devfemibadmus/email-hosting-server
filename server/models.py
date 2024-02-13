@@ -1,11 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class CustomUser(AbstractUser):
-    txt_record = models.CharField(max_length=255, blank=True, null=True)
+    txt_record = models.CharField(max_length=255, default='txt')
+
+    def save(self, *args, **kwargs):
+        if not self.txt_record.startswith("mail.blackstackhub.com__"):
+            self.txt_record = f"mail.blackstackhub.com__{self.username}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
+
 
 class Domain(models.Model):
     name = models.CharField(max_length=100)
@@ -15,6 +22,7 @@ class Domain(models.Model):
     def __str__(self):
         return self.name
 
+
 class SecurityInfo(models.Model):
     tls_enabled = models.BooleanField(default=False)
     tls_version = models.CharField(max_length=20, blank=True, null=True)
@@ -23,11 +31,12 @@ class SecurityInfo(models.Model):
     encryption_standard = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.tls_enabled
+        return f"TLS Enabled: {self.tls_enabled}"
+
 
 class EmailMessage(models.Model):
     sender = models.EmailField()
-    recipients = models.ManyToManyField(CustomUser, related_name='received_messages')
+    domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
     subject = models.CharField(max_length=255)
     body = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
@@ -44,5 +53,3 @@ class EmailMessage(models.Model):
 
     def __str__(self):
         return self.subject
-
-
