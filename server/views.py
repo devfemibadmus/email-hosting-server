@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from .decorator.authenticator import resolve_domain_record
 from .models import EmailMessage, CustomUser, Domain
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.shortcuts import render
 from django.views import View
@@ -10,26 +11,21 @@ from .models import Domain
 def server(request):
     return render(request, 'server/email.html')
 
+
 class DomainView(View):
-    @login_required
-    @resolve_domain_record
+    @method_decorator(login_required)
+    @method_decorator(resolve_domain_record)
     def get(self, request, *args, **kwargs):
         domain = kwargs.get('domain') or request.GET.get('domain')
-        if domain:
-            if Domain.objects.filter(name=domain, user=request.user).exists():
-                messages.success(request, f"{domain} associated with this account")
-                domain_obj = Domain.objects.get(name=domain, user=request.user)
-            else:
-                messages.info(request, f"{domain} not associated with this account")
-                domain_obj = None
-        else:
+        if not domain:
             return redirect('server')
-        return render(request, "server/domain.html", {'domain': domain_obj})
+        return render(request, "server/domain.html", {'domain': domain})
 
-    @login_required
-    @resolve_domain_record
+    @method_decorator(login_required)
+    @method_decorator(resolve_domain_record)
     def post(self, request, *args, **kwargs):
         domain = request.POST.get('domain')
+        domain_obj = domain
         if domain:
             mx_record = request.mx_record
             txt_record = request.txt_record
@@ -46,8 +42,7 @@ class DomainView(View):
                     else:
                         messages.warning(request, f"{domain} TXT record is incorrect")
             else:
-                messages.warning(request, f"{domain} pointing to {mx_record}")
+                messages.warning(request, f"MX record {domain} pointing to {mx_record}")
         else:
             messages.warning(request, "Domain parameter is missing")
-            domain_obj = None
         return render(request, "server/domain.html", {'domain': domain_obj})
