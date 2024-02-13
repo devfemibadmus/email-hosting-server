@@ -100,3 +100,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_URL = '/signin/'
+MX_RECORD = 'mail.blackstackhub.com.' # 'mx1.improvmx.com.' # test
