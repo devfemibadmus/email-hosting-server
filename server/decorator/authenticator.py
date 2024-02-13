@@ -2,6 +2,7 @@ from functools import wraps
 from django.conf import settings
 from django.contrib import messages
 from ..operator.dns_checker import DNSChecker
+from ..models import Domain
 
 def resolve_domain_record(view_func):
     @wraps(view_func)
@@ -18,9 +19,11 @@ def resolve_domain_record(view_func):
             else:
                 messages.error(request, request.mx_record)
             if request.txt_record == True:
-                messages.success(request, "TXT record found")
+                messages.success(request, "my TXT record found")
+                domain_obj, available = Domain.objects.get_or_create(user=request.user, name=domain, txt_record=request.user.txt_record)
+                request.domain_obj = domain_obj
             elif request.txt_record == False:
-                messages.success(request, "TXT record not found")
+                messages.success(request, "my TXT record not found")
             else:
                 messages.error(request, request.txt_record)
         else:
