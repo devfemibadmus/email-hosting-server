@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from decorator.authenticator import resolve_domain_record
+from .decorator.authenticator import resolve_domain_record
 from .models import EmailMessage, CustomUser, Domain
 from django.contrib import messages
 from django.shortcuts import render
