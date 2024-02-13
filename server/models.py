@@ -13,6 +13,10 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+    def get_owned_domains(self):
+        return Domain.objects.filter(user=self)
+
+
 
 class Domain(models.Model):
     name = models.CharField(max_length=100)
