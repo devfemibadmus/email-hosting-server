@@ -22,6 +22,9 @@ class Domain(models.Model):
     def __str__(self):
         return self.name
 
+    def get_emails(self):
+        return EmailMessage.objects.filter(domain=self)
+
 
 class SecurityInfo(models.Model):
     tls_enabled = models.BooleanField(default=False)
