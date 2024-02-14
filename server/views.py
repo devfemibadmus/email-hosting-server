@@ -1,3 +1,4 @@
+from .decorator.mail import get_mail, create_mail, delete_mail
 from django.contrib.auth.decorators import login_required
 from .decorator.authenticator import resolve_domain_record
 from .models import EmailMessage, CustomUser, Domain
@@ -45,3 +46,34 @@ class DomainView(View):
         else:
             messages.warning(request, "Domain parameter is missing")
         return render(request, "server/domain.html", {'domain': domain_obj})
+
+
+class MessagesView(View):
+    @method_decorator(login_required)
+    @method_decorator(get_mail)
+    def get(self, request, *args, **kwargs):
+        email_messages = request.kwargs.get('email_messages')
+        messages = messages.get_messages(request)
+        if request.GET.get("integrate"):
+            response_data = {
+                'email_messages':email_messages,
+                'messages': messages
+            }
+            return JsonResponse(response_data)
+        return render(request, 'server/email.html', {'email_messages': email_messages, 'messages': messages})
+        
+    
+    @method_decorator(login_required)
+    @method_decorator(create_mail)
+    @method_decorator(delete_mail)
+    def post(self, request, *args, **kwargs):
+        email_message = request.kwargs.get('email_message')
+        messages = messages.get_messages(request)
+        if request.GET.get("integrate"):
+            response_data = {
+                'email_message':email_message,
+                'messages': messages
+            }
+            return JsonResponse(response_data)
+        return render(request, 'server/email.html', {'email_message': email_message, 'messages': messages})
+
