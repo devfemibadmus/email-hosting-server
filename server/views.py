@@ -3,7 +3,7 @@ from .decorator.authenticator import resolve_domain_record
 from .models import EmailMessage, CustomUser, Domain
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Domain
 
@@ -25,7 +25,6 @@ class DomainView(View):
     @method_decorator(resolve_domain_record)
     def post(self, request, *args, **kwargs):
         domain = request.POST.get('domain')
-        domain_obj = domain
         if domain:
             mx_record = request.mx_record
             txt_record = request.txt_record
