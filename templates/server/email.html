@@ -114,23 +114,34 @@
                <input type="checkbox" id="selectAll"> <label for="selectAll">Select All</label>
             </div>
             <div class="email-list">
+               {% if email_messages %}
                <!-- Email items -->
-               <div class="email-item">Email 1</div>
-               <div class="email-item">Email 2</div>
-               <div class="email-item">Email 3</div>
+               {% for message in email_messages %}
+               <div class="email-item">{{message.subject}} {{message.body}}/div>
+               {% endfor %}
                <!-- Add more email items as needed -->
+               {% else %}
+               <p>no messages...</p>
+               {% endif %}
             </div>
          </div>
       </div>
       <!-- Popup form for composing email -->
-      <form class="popup-form" id="composeForm" action="/server/message">
+      <form class="popup-form" id="composeForm" action="/server/message/" method="POST">
+         {% csrf_token %}
          <h2>Compose Email</h2>
+
+         <input type="text" name="sender">
+
          <label for="to">To:</label>
-         <input type="text" id="to">
+         <input type="text" id="to" name="sendto">
+
          <label for="subject">Subject:</label>
-         <input type="text" id="subject">
+         <input type="text" id="subject" name="subject">
+
          <label for="message">Message:</label>
-         <textarea id="message"></textarea>
+         <textarea id="message" name="body"></textarea>
+
          <button onclick="togglePopupForm()">Close</button>
          <button>Send</button>
       </form>
