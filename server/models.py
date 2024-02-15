@@ -44,6 +44,7 @@ class SecurityInfo(models.Model):
 
 class EmailMessage(models.Model):
     sender = models.EmailField()
+    sendto = models.EmailField()
     domain = models.ForeignKey(Domain, on_delete=models.CASCADE)
     subject = models.CharField(max_length=255)
     body = models.TextField()
