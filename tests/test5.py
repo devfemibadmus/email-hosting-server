@@ -28,7 +28,7 @@ if __name__ == "__main__":
     body = "test"
     smtp_username = "fuckyou"
     smtp_password = "Helloworld1$"
-    smtp_server = "mail.blackstackhub.com"  # Corrected SMTP server address
+    smtp_server = "blackstackhub.com"  # Corrected SMTP server address
     smtp_port = 25
 
     send_mail(sender_email, recipient_email, subject, body, smtp_username, smtp_password, smtp_server, smtp_port)
