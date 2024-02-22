@@ -2,17 +2,34 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
 
+import hashlib
 
+from django.db import models
 
-class EmailSettings(models.Model):
-    smtp_username = models.CharField(max_length=255, blank=True, null=True)
-    smtp_password = models.CharField(max_length=255, blank=True, null=True)
+class VirtualDomain(models.Model):
+    name = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"Email Settings for {self.user.email}"
+        return self.name
+
+class VirtualUser(models.Model):
+    domain = models.ForeignKey(VirtualDomain, on_delete=models.CASCADE)
+    password = models.CharField(max_length=255)
+    email = models.EmailField()
+    alt_users = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.email
+
+    def save(self, *args, **kwargs):
+        # Hash the password before saving
+        if self.password:
+            self.password = hashlib.sha256(self.password.encode()).hexdigest()
+        super().save(*args, **kwargs)
+
+
 class CustomUser(AbstractUser):
     txt_record = models.CharField(max_length=255, default='txt')
-    email_settings = models.OneToOneField("EmailSettings",on_delete=models.CASCADE,null=True,blank=True,related_name="user",)
 
     def save(self, *args, **kwargs):
         if not self.txt_record.startswith(f"{settings.MX_RECORD}"):
