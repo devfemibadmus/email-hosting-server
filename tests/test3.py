@@ -66,7 +66,6 @@ class DNSChecker:
 
 dns_checker = DNSChecker()
 domain = 'blackstackhub.com'
-verify_mx_record = dns_checker.verify_mx(domain, "mx1.improvmx.com.")
-verify_txt_record = dns_checker.verify_txt(domain, "blackstackhub.github.io/akogunakinniyi")
-if verify_mx_record:
-    print(f'verify TXT record for {domain}', verify_mx_record)
+verify_mx_record = dns_checker.verify_mx(domain, "mx1.blackstackhub.com.")
+verify_txt_record = dns_checker.verify_txt(domain, "mail.blackstackhub.com.devfe")
+print(dns_checker.get_txt(domain))

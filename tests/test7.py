@@ -9,7 +9,7 @@ def send_email():
     smtp_port = 587  # Port for TLS (STARTTLS)
 
     # Sender and recipient email addresses
-    sender_email = 'test7@blackstackhub.com'
+    sender_email = 'test8@blackstackhub.com'
     recipient_email = 'devfemibadmus@gmail.com'
 
     # SMTP username and password (authentication credentials)
