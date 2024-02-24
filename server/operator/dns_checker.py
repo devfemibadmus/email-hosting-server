@@ -55,6 +55,7 @@ class DNSChecker:
 
     def verify_txt(self, domain, user_txt=''):
         txt_results = self.get_txt(domain)
+        # print(txt_results)
         if isinstance(txt_results, list) and txt_results:
             for txt in txt_results:
                 if user_txt in txt:
