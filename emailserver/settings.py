@@ -1,16 +1,20 @@
 from pathlib import Path, os
+import mysql.connector
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-$lx#bgx8p((9m+a*wv7%bqe%)1#qgdt27uetd%%eijy&5f(-a^'
+def load_env_vars(env_file_path):
+    with open(env_file_path, 'r') as file:
+        for line in file:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+load_env_vars(os.path.join(BASE_DIR, 'secret/db.env'))
 
+SECRET_KEY = os.environ.get('SECERET')
+DEBUG = os.environ.get('DEBUG')
 ALLOWED_HOSTS = ['*']
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,11 +61,14 @@ WSGI_APPLICATION = 'emailserver.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_DATABASE'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -100,4 +107,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_URL = '/signin/'
-MX_RECORD = 'mail.blackstackhub.com.' # 'mx1.improvmx.com.' # test
+MX_RECORD = 'mail.blackstackhub.com.'
