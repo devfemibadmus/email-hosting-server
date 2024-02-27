@@ -1,2 +1,4 @@
 Django
 dnspython
+mysqlclient
+mysql-connector-python
