@@ -6,6 +6,8 @@ class VirtualDomain(models.Model):
     name = models.CharField(max_length=255)
     txt_record = models.CharField(max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message_tag = models.CharField(max_length=100, blank=True)
+    message = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
