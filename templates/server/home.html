@@ -1,22 +1,3 @@
-
-<!--User domains-->
-{% with domains=request.user.get_owned_domains %}
-{% for domain in domains %}
-<p>{{forloop.counter}} {{domain.name}}</p>
-{% endfor %}
-{% endwith %}
-<!--End user domains-->
-
-
-<!--New domain form-->
-<form method="POST">
-    <p>Add new domain</p>
-    <input type="text">
-    <input type="submit">
-</form>
-<!--End new domain form-->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,7 +129,7 @@
         {% for message in messages %}
             <div class="message {{message.tags}}">{{message}}</div>
         {% endfor %}
-        <form class="add-domain-form">
+        <form class="add-domain-form" action="/server/domain/">
             <input type="text" class="add-domain-input" name="domain" placeholder="Enter domain">
             <button type="submit" class="add-domain-submit">Add Domain</button>
         </form>
