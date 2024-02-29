@@ -35,9 +35,6 @@ def resolve_domain_record(view_func):
                 messages.info(request, f'Add txt record {request.user.txt_record}')
             else:
                 messages.error(request, f'TXT: {txt_record.lower()}')
-            
-        else:
-            messages.error(request, "Domain parameter is missing")
 
         return view_func(request, *args, **kwargs)
     
