@@ -129,7 +129,7 @@
         {% for message in messages %}
             <div class="message {{message.tags}}">{{message}}</div>
         {% endfor %}
-        <form class="add-domain-form" action="/server/domain/">
+        <form class="add-domain-form">
             <input type="text" class="add-domain-input" name="domain" placeholder="Enter domain">
             <button type="submit" class="add-domain-submit">Add Domain</button>
         </form>
