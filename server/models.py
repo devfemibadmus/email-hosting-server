@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class VirtualDomain(models.Model):
+class VirtualDomains(models.Model):
     name = models.CharField(max_length=255)
     txt_record = models.CharField(max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -12,8 +12,19 @@ class VirtualDomain(models.Model):
     def __str__(self):
         return self.name
 
-class VirtualUser(models.Model):
-    domain = models.ForeignKey(VirtualDomain, on_delete=models.CASCADE)
+    def get_virtual_users(self):
+        return VirtualUsers.objects.filter(domain=self)
+
+class VirtualAliases(models.Model):
+    domain_id = models.IntegerField()
+    source = models.EmailField()
+    destination = models.EmailField()
+
+    def __str__(self):
+        return self.domain_id
+
+class VirtualUsers(models.Model):
+    domain_id = models.IntegerField()
     password = models.CharField(max_length=255)
     email = models.EmailField()
     alt_users = models.CharField(max_length=255, blank=True, null=True)
@@ -23,7 +34,7 @@ class VirtualUser(models.Model):
 
     def save(self, *args, **kwargs):
         if self.password:
-            self.password = hashlib.sha256(self.password.encode()).hexdigest()
+            self.password = hashlib.sha512(self.password.encode()).hexdigest()
         super().save(*args, **kwargs)
 
 class CustomUser(AbstractUser):
@@ -38,4 +49,4 @@ class CustomUser(AbstractUser):
         return self.username
 
     def get_owned_domains(self):
-        return VirtualDomain.objects.filter(user=self)
+        return VirtualDomains.objects.filter(user=self)
