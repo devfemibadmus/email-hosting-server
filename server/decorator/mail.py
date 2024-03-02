@@ -2,7 +2,7 @@ from functools import wraps
 from django.contrib import messages
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from ..models import VirtualDomain, VirtualUser
+from ..models import VirtualDomains, VirtualUsers
 import imaplib, smtplib, email, ssl, hashlib, re
 
 
@@ -88,11 +88,11 @@ def create_mail(view_func):
                 'to': request.POST.get("to")
             }
             domain_name = extract_domain(mail_info['from'])
-            if VirtualDomain.objects.filter(name=domain_name, user=request.user).exists():
-                domain_instance = VirtualDomain.objects.get(name=domain_name)
+            if VirtualDomains.objects.filter(name=domain_name, user=request.user).exists():
+                domain_instance = VirtualDomains.objects.get(name=domain_name)
                 if validate_mail_info(mail_info):
                     if validate_email(mail_info['to']):
-                        email_account = VirtualUser.objects.filter(email=mail_info['from'], domain__name=domain_name)
+                        email_account = VirtualUsers.objects.filter(email=mail_info['from'], domain_id=domain_instance.id)
                         if email_account.exists():
                             response = send_email(mail_info['from'], mail_info['to'], email_account[0].password, mail_info['subject'], mail_info['body'])
                             if 'sent' in response:
@@ -120,8 +120,8 @@ def get_mail(view_func):
         action, mail_pk, sender = extract_action_and_params(request)
         if action == 'get_mail':
             domain_name = extract_domain(sender)
-            if VirtualDomain.objects.filter(name=domain_name, user=request.user).exists():
-                virtual_user = VirtualUser.objects.get(email=sender)
+            if VirtualDomains.objects.filter(name=domain_name, user=request.user).exists():
+                virtual_user = VirtualUsers.objects.get(email=sender)
                 imap_conn = connect_imap(domain_name, virtual_user.email, virtual_user.password)
                 email_list = fetch_emails(imap_conn)
                 return view_func(request, email_list=email_list, *args, **kwargs)
@@ -136,8 +136,8 @@ def delete_mail(view_func):
         action, mail_pk, sender = extract_action_and_params(request)
         if action == 'delete_mail':
             domain_name = extract_domain(sender)
-            if VirtualDomain.objects.filter(name=domain_name, user=request.user).exists():
-                virtual_user = VirtualUser.objects.get(email=sender)
+            if VirtualDomains.objects.filter(name=domain_name, user=request.user).exists():
+                virtual_user = VirtualUsers.objects.get(email=sender)
                 imap_conn = connect_imap(domain_name, virtual_user.email, virtual_user.password)
                 imap_conn.store(mail_pk, '+FLAGS', '\\Deleted')
                 imap_conn.expunge()
