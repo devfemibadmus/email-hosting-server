@@ -2,7 +2,7 @@ from functools import wraps
 from django.conf import settings
 from django.contrib import messages
 from ..operator.dns_checker import DNSChecker
-from ..models import VirtualDomain
+from ..models import VirtualDomains
 
 def resolve_domain_record(view_func):
     @wraps(view_func)
@@ -15,7 +15,7 @@ def resolve_domain_record(view_func):
             txt_record = checker.verify_txt(domain_name, request.user.txt_record)
             
             if mx_record is True & txt_record is True:
-                VirtualDomain.objects.get_or_create(name=domain_name, user=request.user, txt_record=request.user.txt_record)
+                VirtualDomains.objects.get_or_create(name=domain_name, user=request.user, txt_record=request.user.txt_record)
                 messages.success(request, f"{domain_name} is yours")
                 noneed = True
             
