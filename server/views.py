@@ -12,7 +12,13 @@ from .models import VirtualDomains
 class DomainView(View):
     @method_decorator(login_required)
     @method_decorator(resolve_domain_record)
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, domain=None, *args, **kwargs):
+        if domain is not None:
+            if VirtualDomains.objects.filter(name=domain, user=request.user).exists():
+                domain = VirtualDomains.objects.get(name=domain, user=request.user)
+            else:
+                messages.error(request, f"{domain} doesn't exist!")
+            return render(request, "server/domain.html", {"domain":domain})
         return render(request, "server/home.html")
 
 class MessagesView(View):
