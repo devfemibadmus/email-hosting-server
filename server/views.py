@@ -7,7 +7,7 @@ from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.contrib import messages
 from django.views import View
-from .models import VirtualDomain
+from .models import VirtualDomains
 
 class DomainView(View):
     @method_decorator(login_required)
