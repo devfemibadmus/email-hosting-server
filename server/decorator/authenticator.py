@@ -14,7 +14,7 @@ def resolve_domain_record(view_func):
             mx_record = checker.verify_mx(domain_name, settings.MX_RECORD)
             txt_record = checker.verify_txt(domain_name, request.user.txt_record)
             
-            if mx_record is True & txt_record is True:
+            if mx_record is True and txt_record is True:
                 VirtualDomains.objects.get_or_create(name=domain_name, user=request.user, txt_record=request.user.txt_record)
                 messages.success(request, f"{domain_name} is yours")
                 noneed = True
