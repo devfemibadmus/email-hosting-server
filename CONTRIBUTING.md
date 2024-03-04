@@ -25,4 +25,11 @@ Please note that this project is governed by our [Code of Conduct](CODE_OF_CONDU
 
 If you have any questions about contributing to the project, please don't hesitate to reach out to us.
 
+## Contributing to Frontend
+
+We encourage contributions to the frontend of our project. You can help by:
+
+- Designing templates.
+- Pushing changes to the frontend branch.
+
 Thank you for your interest in contributing to our project!
